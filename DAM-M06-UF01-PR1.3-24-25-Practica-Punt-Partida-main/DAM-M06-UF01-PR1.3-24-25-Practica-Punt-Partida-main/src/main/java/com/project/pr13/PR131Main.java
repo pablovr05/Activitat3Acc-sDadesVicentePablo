@@ -1,14 +1,18 @@
 package com.project.pr13;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
+import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.util.stream.Stream;
 
 /**
  * Classe principal que crea un document XML amb informació de llibres i el guarda en un fitxer.
@@ -92,9 +96,78 @@ public class PR131Main {
      * @return Document XML creat o null en cas d'error.
      */
     private static Document construirDocument() {
-        // *************** CODI PRÀCTICA **********************/
-       return null; // Substitueix pel teu
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.newDocument();
+
+            Element elmRoot = doc.createElement("biblioteca");
+
+            doc.appendChild(elmRoot);
+
+            Element elmBook = doc.createElement("llibre");
+
+            elmRoot.appendChild(elmBook);
+
+            Element titol = doc.createElement("titol");
+            Text nodeTextTitol = doc.createTextNode("El viatge dels venturons");
+            titol.appendChild(nodeTextTitol);
+            elmBook.appendChild(titol);
+
+            Element autor = doc.createElement("autor");
+            Text nodeTextAutor = doc.createTextNode("Joan Pla");
+            autor.appendChild(nodeTextAutor);
+            elmBook.appendChild(autor);
+
+            Element anyPublicació = doc.createElement("anyPublicacio");
+            Text nodeTextAny = doc.createTextNode("1998");
+            anyPublicació.appendChild(nodeTextAny);
+            elmBook.appendChild(anyPublicació);
+
+            Element editorial = doc.createElement("editorial");
+            Text nodeTextEditorial = doc.createTextNode("Edicions Mar");
+            editorial.appendChild(nodeTextEditorial);
+            elmBook.appendChild(editorial);
+
+            Element genere = doc.createElement("genere");
+            Text nodeTextGenere = doc.createTextNode("Aventura");
+            genere.appendChild(nodeTextGenere);
+            elmBook.appendChild(genere);
+
+            Element pagines = doc.createElement("pagines");
+            Text nodeTextPagines = doc.createTextNode("320");
+            pagines.appendChild(nodeTextPagines);
+            elmBook.appendChild(pagines);
+
+            Element disponible = doc.createElement("disponible");
+            Text nodeTextDisponible = doc.createTextNode("true");
+            disponible.appendChild(nodeTextDisponible);
+            elmBook.appendChild(disponible);
+
+            Attr attrId = doc.createAttribute("id");
+            attrId.setValue("001");
+            elmBook.setAttributeNode(attrId);
+
+            return doc;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; 
     }
+
+    /*
+ * <biblioteca>
+    <llibre id="001">
+        <titol>El viatge dels venturons</titol>
+        <autor>Joan Pla</autor>
+        <anyPublicacio>1998</anyPublicacio>
+        <editorial>Edicions Mar</editorial>
+        <genere>Aventura</genere>
+        <pagines>320</pagines>
+        <disponible>true</disponible>
+    </llibre>
+</biblioteca>
+ */
 
     /**
      * Guarda el document XML proporcionat en el fitxer especificat.
@@ -103,6 +176,20 @@ public class PR131Main {
      * @param fitxerSortida Fitxer de sortida on es guardarà el document.
      */
     private static void guardarDocument(Document doc, File fitxerSortida) {
-        // *************** CODI PRÀCTICA **********************/
+        try {
+            fitxerSortida.createNewFile();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(fitxerSortida);
+
+            transformer.transform(source, result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
